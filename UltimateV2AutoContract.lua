@@ -1,15 +1,9 @@
---------------------------------------------------
--- SERVICES
---------------------------------------------------
 local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
 
 local plr = Players.LocalPlayer
 getgenv().AutoContractEnabled = false
 
---------------------------------------------------
--- CONFIG
---------------------------------------------------
 local FLY_HEIGHT = 120
 local SPEED = 220
 local ARRIVE_DISTANCE = 60
@@ -17,9 +11,6 @@ local ARRIVE_DISTANCE = 60
 local travelling = false
 local lastTarget = nil
 
---------------------------------------------------
--- UI DELUXE GOD
---------------------------------------------------
 local gui = Instance.new("ScreenGui", plr.PlayerGui)
 gui.Name = "DeluxeGodUI"
 gui.ResetOnSpawn = false
@@ -37,9 +28,6 @@ local stroke = Instance.new("UIStroke",main)
 stroke.Color = Color3.fromRGB(0,255,140)
 stroke.Thickness = 1.5
 
---------------------------------------------------
--- TITLE
---------------------------------------------------
 local title = Instance.new("TextLabel",main)
 title.Size = UDim2.new(1,0,0,40)
 title.BackgroundTransparency = 1
@@ -57,9 +45,6 @@ subtitle.Font = Enum.Font.GothamSemibold
 subtitle.TextSize = 14
 subtitle.TextColor3 = Color3.fromRGB(0,255,140)
 
---------------------------------------------------
--- STATUS
---------------------------------------------------
 local status = Instance.new("TextLabel",main)
 status.Size = UDim2.new(1,0,0,25)
 status.Position = UDim2.new(0,0,0,65)
@@ -69,9 +54,6 @@ status.Font = Enum.Font.Gotham
 status.TextSize = 13
 status.TextColor3 = Color3.fromRGB(200,200,200)
 
---------------------------------------------------
--- WARNING (BLINKING)
---------------------------------------------------
 local warning = Instance.new("TextLabel", main)
 warning.Size = UDim2.new(0.9,0,0,45)
 warning.Position = UDim2.new(0.05,0,0,90)
@@ -100,16 +82,10 @@ task.spawn(function()
 	end
 end)
 
---------------------------------------------------
--- SOUND
---------------------------------------------------
 local clickSound = Instance.new("Sound", main)
 clickSound.SoundId = "rbxassetid://6026984224"
 clickSound.Volume = 1
 
---------------------------------------------------
--- TOGGLE BUTTON
---------------------------------------------------
 local toggle = Instance.new("TextButton",main)
 toggle.Size = UDim2.new(0.8,0,0,45)
 toggle.Position = UDim2.new(0.1,0,0.75,0)
@@ -121,7 +97,6 @@ toggle.TextColor3 = Color3.new(1,1,1)
 Instance.new("UICorner",toggle).CornerRadius = UDim.new(0,10)
 
 toggle.MouseButton1Click:Connect(function()
-
 	clickSound:Play()
 
 	getgenv().AutoContractEnabled =
@@ -136,11 +111,7 @@ toggle.MouseButton1Click:Connect(function()
 	end
 end)
 
---------------------------------------------------
--- TWEEN SYSTEM
---------------------------------------------------
 local function tweenModel(model, targetCF, time)
-
 	if not model or not model.PrimaryPart then return end
 
 	local value = Instance.new("CFrameValue")
@@ -163,11 +134,7 @@ local function tweenModel(model, targetCF, time)
 	value:Destroy()
 end
 
---------------------------------------------------
--- GOD FLIGHT
---------------------------------------------------
 local function flyTo(model, targetCF)
-
 	if travelling then return end
 	travelling = true
 
@@ -197,9 +164,6 @@ local function flyTo(model, targetCF)
 	travelling = false
 end
 
---------------------------------------------------
--- HELPERS
---------------------------------------------------
 local function getPlane()
 	local char = plr.Character
 	if not char then return end
@@ -218,13 +182,8 @@ local function findMarker()
 	end
 end
 
---------------------------------------------------
--- MAIN LOOP
---------------------------------------------------
 task.spawn(function()
-
 	while task.wait(0.7) do
-
 		if not getgenv().AutoContractEnabled then
 			continue
 		end
