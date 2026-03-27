@@ -82,13 +82,49 @@ task.spawn(function()
 	end
 end)
 
+local credit = Instance.new("TextLabel", main)
+credit.Size = UDim2.new(1,0,0,18)
+credit.Position = UDim2.new(0,0,1,-20)
+credit.BackgroundTransparency = 1
+credit.Text = "made by: tigredabet [DISCORD]"
+credit.Font = Enum.Font.Gotham
+credit.TextSize = 12
+credit.TextColor3 = Color3.fromRGB(150,150,150)
+credit.TextXAlignment = Enum.TextXAlignment.Center
+
+task.spawn(function()
+	while true do
+		TweenService:Create(
+			credit,
+			TweenInfo.new(1.5, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut),
+			{
+				TextTransparency = 0.4,
+				TextColor3 = Color3.fromRGB(0,255,140)
+			}
+		):Play()
+
+		task.wait(1.5)
+
+		TweenService:Create(
+			credit,
+			TweenInfo.new(1.5, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut),
+			{
+				TextTransparency = 0,
+				TextColor3 = Color3.fromRGB(150,150,150)
+			}
+		):Play()
+
+		task.wait(1.5)
+	end
+end)
+
 local clickSound = Instance.new("Sound", main)
 clickSound.SoundId = "rbxassetid://6026984224"
 clickSound.Volume = 1
 
 local toggle = Instance.new("TextButton",main)
 toggle.Size = UDim2.new(0.8,0,0,45)
-toggle.Position = UDim2.new(0.1,0,0.75,0)
+toggle.Position = UDim2.new(0.1,0,0.68,0)
 toggle.Text = "ENABLE"
 toggle.Font = Enum.Font.GothamBold
 toggle.TextSize = 16
@@ -98,10 +134,7 @@ Instance.new("UICorner",toggle).CornerRadius = UDim.new(0,10)
 
 toggle.MouseButton1Click:Connect(function()
 	clickSound:Play()
-
-	getgenv().AutoContractEnabled =
-		not getgenv().AutoContractEnabled
-
+	getgenv().AutoContractEnabled = not getgenv().AutoContractEnabled
 	if getgenv().AutoContractEnabled then
 		toggle.Text = "DISABLE"
 		toggle.BackgroundColor3 = Color3.fromRGB(40,170,90)
@@ -113,23 +146,18 @@ end)
 
 local function tweenModel(model, targetCF, time)
 	if not model or not model.PrimaryPart then return end
-
 	local value = Instance.new("CFrameValue")
 	value.Value = model:GetPrimaryPartCFrame()
-
 	local con = value.Changed:Connect(function()
 		model:SetPrimaryPartCFrame(value.Value)
 	end)
-
 	local tween = TweenService:Create(
 		value,
 		TweenInfo.new(time, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut),
 		{Value = targetCF}
 	)
-
 	tween:Play()
 	tween.Completed:Wait()
-
 	con:Disconnect()
 	value:Destroy()
 end
@@ -137,29 +165,18 @@ end
 local function flyTo(model, targetCF)
 	if travelling then return end
 	travelling = true
-
 	local start = model.PrimaryPart.CFrame
 	local distance = (start.Position - targetCF.Position).Magnitude
 	local travelTime = math.clamp(distance / SPEED, 2, 10)
-
 	local upStart = start + Vector3.new(0,FLY_HEIGHT,0)
 	local upEnd = targetCF + Vector3.new(0,FLY_HEIGHT,0)
-
 	tweenModel(model, upStart, 1.2)
 	tweenModel(model, upEnd, travelTime)
-
-	local groundCF = CFrame.new(
-		targetCF.Position.X,
-		targetCF.Position.Y + 5,
-		targetCF.Position.Z
-	)
-
+	local groundCF = CFrame.new(targetCF.Position.X, targetCF.Position.Y + 5, targetCF.Position.Z)
 	tweenModel(model, groundCF, 1.5)
-
 	model.PrimaryPart.Anchored = true
 	task.wait(2)
 	model.PrimaryPart.Anchored = false
-
 	lastTarget = targetCF.Position
 	travelling = false
 end
@@ -167,7 +184,6 @@ end
 local function getPlane()
 	local char = plr.Character
 	if not char then return end
-
 	local hum = char:FindFirstChildOfClass("Humanoid")
 	if hum and hum.SeatPart then
 		return hum.SeatPart.Parent.Parent
@@ -184,33 +200,15 @@ end
 
 task.spawn(function()
 	while task.wait(0.7) do
-		if not getgenv().AutoContractEnabled then
-			continue
-		end
-
+		if not getgenv().AutoContractEnabled then continue end
 		local plane = getPlane()
 		local marker = findMarker()
-
-		if not plane or not marker then
-			continue
-		end
-
-		if not marker.Parent:FindFirstChild("Highlight") then
-			continue
-		end
-
+		if not plane or not marker then continue end
+		if not marker.Parent:FindFirstChild("Highlight") then continue end
 		local targetCF = marker.Parent.Highlight.WorldPivot
 		local distance = plr:DistanceFromCharacter(targetCF.Position)
-
-		if distance < ARRIVE_DISTANCE then
-			continue
-		end
-
-		if lastTarget and
-			(lastTarget - targetCF.Position).Magnitude < 10 then
-			continue
-		end
-
+		if distance < ARRIVE_DISTANCE then continue end
+		if lastTarget and (lastTarget - targetCF.Position).Magnitude < 10 then continue end
 		flyTo(plane, targetCF)
 	end
 end)
